@@ -1,0 +1,33 @@
+class SpicesController < ApplicationController
+rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+
+  def index
+    spices = Spice.all
+    render json: spices
+  end
+
+  def destroy
+    spice = Spice.find(params[:id])
+    spice.delete
+    head :no_content
+  end
+  def update
+    spice = Spice.find(params[:id])
+    spice.update(spice_params)
+    render json: spice
+  end
+
+  def create
+    spice = Spice.create(spice_params)
+    render json: spice, status: :created
+  end
+
+  private
+  def spice_params
+    params.permit(:title, :image, :description, :notes, :rating )
+  end
+
+  def render_not_found
+   render json: { error: "User not Found"}, status: :not_found
+  end
+end
